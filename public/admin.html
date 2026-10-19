@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Portfolio Inbox</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#4A3D44;--muted:#8A7B82;--bg:#FDFAF9;--soft:#F7EEEE;--line:#EBDDDF;--rose:#C9939B;--rose-dark:#A9727B;--err:#B0465A}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Jost",system-ui,sans-serif;font-weight:300;background:var(--bg);color:var(--ink);line-height:1.6;min-height:100vh}
+h1,h2{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500}
+.wrap{width:min(860px,100% - 32px);margin-inline:auto;padding:3rem 0}
+button,input{font-family:inherit;font-size:1rem}
+.btn{display:inline-block;text-decoration:none;padding:.7rem 1.6rem;border-radius:999px;border:1px solid var(--rose);background:var(--rose);color:#fff;cursor:pointer}
+.btn:hover{background:var(--rose-dark)}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.ghost:hover{background:var(--soft)}
+.btn.small{padding:.35rem .9rem;font-size:.85rem}
+:focus-visible{outline:2px solid var(--rose);outline-offset:3px}
+#login{max-width:360px;margin:18vh auto 0;text-align:center}
+#login h1{font-size:2.4rem;margin-bottom:.4rem}
+#login p{color:var(--muted);margin-bottom:1.5rem}
+#login input{width:100%;padding:.85rem 1.1rem;border:1px solid var(--line);border-radius:12px;margin-bottom:1rem;background:#fff;color:var(--ink)}
+.err{color:var(--err);min-height:1.5em;margin-top:.8rem;font-size:.95rem}
+header{display:flex;justify-content:space-between;align-items:end;gap:1rem;flex-wrap:wrap;margin-bottom:2rem}
+header h1{font-size:2.6rem;line-height:1}
+.stats{color:var(--muted);font-size:.95rem;margin-top:.4rem}
+.list{list-style:none;display:grid;gap:1rem}
+.msg{background:#fff;border:1px solid var(--line);border-radius:16px;padding:1.4rem 1.5rem}
+.msg.unread{border-left:4px solid var(--rose)}
+.msg .top{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.msg h2{font-size:1.4rem}
+.msg .from{color:var(--muted);font-size:.92rem}
+.msg .from a{color:var(--rose-dark)}
+.msg time{color:var(--muted);font-size:.85rem;white-space:nowrap}
+.msg .body{margin:.8rem 0 1rem;white-space:pre-wrap;word-break:break-word}
+.msg .actions{display:flex;gap:.5rem;flex-wrap:wrap}
+.empty{text-align:center;color:var(--muted);padding:4rem 1rem;border:1px dashed var(--line);border-radius:16px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <form id="login">
+    <h1>Inbox</h1>
+    <p>Enter your admin password to read messages from your portfolio.</p>
+    <input id="password" type="password" placeholder="Admin password" autocomplete="current-password" required aria-label="Admin password">
+    <button class="btn" type="submit">Open inbox</button>
+    <p class="err" id="loginErr" role="alert"></p>
+  </form>
+
+  <main id="inbox" hidden>
+    <header>
+      <div>
+        <h1>Inbox</h1>
+        <p class="stats" id="stats"></p>
+      </div>
+      <div class="actions">
+        <button class="btn ghost small" id="refresh" type="button">Refresh</button>
+        <button class="btn ghost small" id="logout" type="button">Sign out</button>
+      </div>
+    </header>
+    <p class="err" id="inboxErr" role="alert"></p>
+    <ul class="list" id="list"></ul>
+  </main>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+let password='';
+try{password=sessionStorage.getItem('adminPw')||''}catch{}
+
+async function api(method,body){
+  const res=await fetch('/api/messages',{method,headers:{'Authorization':'Bearer '+password,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
+  const data=await res.json().catch(()=>({}));
+  if(!res.ok){const e=new Error(data.error||'Request failed.');e.status=res.status;throw e}
+  return data;
+}
+
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+function render({messages,views}){
+  const unread=messages.filter(m=>!m.is_read).length;
+  $('stats').textContent=`${messages.length} message${messages.length===1?'':'s'}, ${unread} unread · ${views.toLocaleString()} site visits`;
+  if(!messages.length){$('list').innerHTML='<li class="empty">No messages yet. They will show up here when someone uses the contact form.</li>';return}
+  $('list').innerHTML=messages.map(m=>`
+    <li class="msg ${m.is_read?'':'unread'}" data-id="${m.id}">
+      <div class="top">
+        <div>
+          <h2>${esc(m.subject||'(no subject)')}</h2>
+          <p class="from">${esc(m.name)} · <a href="mailto:${esc(m.email)}">${esc(m.email)}</a></p>
+        </div>
+        <time datetime="${esc(m.created_at)}">${new Date(m.created_at).toLocaleString()}</time>
+      </div>
+      <p class="body">${esc(m.message)}</p>
+      <div class="actions">
+        <a class="btn small" href="mailto:${esc(m.email)}?subject=${encodeURIComponent('Re: '+(m.subject||'your message'))}">Reply</a>
+        <button class="btn ghost small" data-act="read" data-val="${!m.is_read}">${m.is_read?'Mark as unread':'Mark as read'}</button>
+        <button class="btn ghost small" data-act="delete">Delete</button>
+      </div>
+    </li>`).join('');
+}
+
+async function load(){
+  $('inboxErr').textContent='';
+  try{
+    const data=await api('GET');
+    try{sessionStorage.setItem('adminPw',password)}catch{}
+    $('login').hidden=true;$('inbox').hidden=false;
+    render(data);
+  }catch(e){
+    if(e.status===401){
+      password='';try{sessionStorage.removeItem('adminPw')}catch{}
+      $('inbox').hidden=true;$('login').hidden=false;
+      $('loginErr').textContent='That password is incorrect.';
+    }else{
+      $('login').hidden||($('loginErr').textContent=e.message);
+      $('inboxErr').textContent=e.message;
+    }
+  }
+}
+
+$('login').addEventListener('submit',e=>{e.preventDefault();$('loginErr').textContent='';password=$('password').value;load()});
+$('refresh').addEventListener('click',load);
+$('logout').addEventListener('click',()=>{password='';try{sessionStorage.removeItem('adminPw')}catch{};$('inbox').hidden=true;$('login').hidden=false;$('password').value=''});
+$('list').addEventListener('click',async e=>{
+  const btn=e.target.closest('button[data-act]');if(!btn)return;
+  const id=Number(btn.closest('.msg').dataset.id);
+  if(btn.dataset.act==='delete'&&!confirm('Delete this message? This cannot be undone.'))return;
+  btn.disabled=true;
+  try{
+    if(btn.dataset.act==='read') await api('PATCH',{id,is_read:btn.dataset.val==='true'});
+    else await api('DELETE',{id});
+    load();
+  }catch(err){$('inboxErr').textContent=err.message;btn.disabled=false}
+});
+if(password) load();
+</script>
+</body>
+</html>
