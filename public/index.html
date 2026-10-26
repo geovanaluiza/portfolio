@@ -238,6 +238,41 @@ nav ul a.active{opacity:1;color:var(--accent)}
 .avatar img{box-shadow:14px 14px 0 var(--sage-soft)}
 .eyebrow{color:var(--rose)}
 footer{border-top:3px solid var(--sage)}
+
+/* Maya-inspired palette: neutral grays, pale blue sections, olive details */
+:root{--accent:#757557;--accent-hover:#63634d;--text:#333333;--muted:#696969;--line:#d9d9d9;--line-soft:#ececec;--bg-alt:#f0f7ff;--tint:#f2f2ef;--navy:#2b2b2b;--sage:#757557;--rose:#757557}
+body{color:#333}
+.hero::before{background:#e3eefb}
+.hero::after{background:#eef4fb}
+.hero h1 em{color:var(--accent)}
+.eyebrow{color:var(--muted)}
+.title h2{color:#333}
+.title h2::after{background:var(--accent)}
+.btn{background:#2b2b2b;color:#fff}
+.btn:hover{background:#454545;box-shadow:0 8px 20px rgba(0,0,0,.15)}
+.btn.ghost{background:transparent;color:#333;border:1px solid #b6b6b6}
+.btn.ghost:hover{background:rgba(0,0,0,.04);border-color:#333}
+.progress{background:var(--accent)}
+.scroll-cue{border-color:#b6b6b6}.scroll-cue::after{background:var(--accent)}
+nav ul a::after{background:var(--accent)}nav ul a.active{color:var(--accent)}
+.courses span,.tags span{background:#f2f2f2;color:#454545}
+.alt .courses span,.card .tags span,.skills-grid .tags span{background:#fff}
+.tags span:hover{background:var(--accent);color:#fff}
+.card,.activity{background:#fff;border:1px solid var(--line-soft)}
+#projects .card{background:#fafafa}
+.card::before,.projects .card:nth-child(3n+2)::before,.projects .card:nth-child(3n)::before{background:var(--accent)}
+.card:hover,.entry:hover,.activity:hover,.skills-grid>div:hover{box-shadow:0 12px 30px rgba(0,0,0,.08)}
+.activity,.activities .activity:nth-child(2n),.activities .activity:nth-child(3n){border-left:3px solid var(--accent)}
+.timeline::before{background:#d9d9d9}
+.timeline>li::before,.timeline>li:nth-child(2)::before{background:#fff;border:2px solid var(--accent);box-shadow:none}
+.when{color:var(--accent)}
+.skills-grid h3,.skills-grid>div:nth-child(2) h3,.skills-grid>div:nth-child(3) h3,.details b{color:var(--accent)}
+.social a{background:#f2f2f2;color:#333}.social a:hover{background:#e6e6e6}
+.avatar img{box-shadow:none}
+a{color:var(--accent)}
+footer{background:#2b2b2b;color:#d9d9d9;border-top:0}
+footer .social a{background:transparent;color:#f0f0f0}
+.contact-form input:focus,.contact-form textarea:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(117,117,87,.15)}
 </style>
 </head>
 <body>
