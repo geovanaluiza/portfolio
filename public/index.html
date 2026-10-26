@@ -220,6 +220,24 @@ nav ul a.active{opacity:1;color:var(--accent)}
 .btn{transition:background .2s,transform .2s,box-shadow .2s}
 .btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(31,78,140,.25)}
 @media (prefers-reduced-motion:reduce){.hero::before,.hero::after,.scroll-cue::after{animation:none}.hero .eyebrow,.hero h1,.hero .lead,.hero .cta{opacity:1;animation:none}.rise{opacity:1;transform:none;transition:none}.title h2::after{width:44px;transition:none}}
+
+/* Secondary accents: sage green + dusty rose */
+:root{--sage:#8fb08a;--sage-soft:#e4eee1;--rose:#b4877d;--rose-soft:#f3e6e2}
+.hero::before{background:var(--sage-soft)}
+.hero::after{background:var(--rose-soft)}
+.progress{background:linear-gradient(90deg,#1f4e8c,var(--sage),var(--rose))}
+.title h2::after{background:linear-gradient(90deg,var(--accent) 0 60%,var(--sage) 60% 80%,var(--rose) 80%)}
+.timeline::before{background:linear-gradient(var(--accent),var(--sage),var(--rose-soft))}
+.timeline>li:nth-child(2)::before{background:var(--sage);box-shadow:0 0 0 2px var(--sage)}
+.activities .activity:nth-child(2n){border-left-color:var(--sage)}
+.activities .activity:nth-child(3n){border-left-color:var(--rose)}
+.projects .card:nth-child(3n+2)::before{background:linear-gradient(90deg,var(--sage),#b9d1b4)}
+.projects .card:nth-child(3n)::before{background:linear-gradient(90deg,var(--rose),#d6b3ab)}
+.skills-grid>div:nth-child(2) h3{color:#5f8a5a}
+.skills-grid>div:nth-child(3) h3{color:var(--rose)}
+.avatar img{box-shadow:14px 14px 0 var(--sage-soft)}
+.eyebrow{color:var(--rose)}
+footer{border-top:3px solid var(--sage)}
 </style>
 </head>
 <body>
