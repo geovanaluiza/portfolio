@@ -474,7 +474,7 @@ document.getElementById('contactForm').addEventListener('submit',async e=>{
     const res=await fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
     const json=await res.json().catch(()=>({}));
     if(res.ok){
-      status.className='ok';status.textContent='Message sent! I'll get back to you soon.';
+      status.className='ok';status.textContent="Message sent! I'll get back to you soon.";
       form.reset();
     }else if(res.status===422&&json.fields){
       status.className='err';status.textContent=json.error||'Please check the highlighted fields.';
